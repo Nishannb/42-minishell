@@ -1,4 +1,5 @@
 
+
 #ifndef EXECUTOR_H
 # define EXECUTOR_H
 
@@ -81,7 +82,7 @@ void				save_fds(int *saved_stdin, int *saved_stdout);
 void				restore_fds(int saved_stdin, int saved_stdout);
 void				cleanup_fds(int fd_in, int fd_out);
 void				apply_redirections(int fd_in, int fd_out);
-int					set_filedirectories(t_cmd *cmd, int *fd_in, int *fd_out);
+int					set_filedirectories(t_cmd *cmd, int *fd_in, int *fd_out, t_env *env_list);
 
 /* Path Resolution */
 char				*find_executable_in_path(const char *cmd, t_env *env_list);
@@ -93,6 +94,6 @@ int					ft_execvp(const char *file, char *const argv[], char **envp,
 char				**convert_list_to_arr(t_list *lst);
 
 /* Heredoc Execution */
-int					execute_heredoc(const char *delimiter);
+int					execute_heredoc(const char *delimiter, t_env *env_list, int is_quoted);
 
 #endif

@@ -20,7 +20,7 @@ static int	handle_append_output(t_redir *redir, int *fd_out)
 	return (0);
 }
 
-static int	handle_heredoc(t_redir *redir, int *fd_in)
+static int	handle_heredoc(t_redir *redir, int *fd_in, t_env *env_list)
 {
 	if (!redir->direction || *redir->direction == '\0')
 	{
@@ -30,7 +30,7 @@ static int	handle_heredoc(t_redir *redir, int *fd_in)
 	}
 	if (*fd_in != -1)
 		close(*fd_in);
-	*fd_in = execute_heredoc(redir->direction);
+	*fd_in = execute_heredoc(redir->direction, env_list, redir->is_quoted);
 	if (*fd_in == -1)
 	{
 		perror("heredoc");
@@ -77,7 +77,7 @@ static int	handle_input_redir(t_redir *redir, int *fd_in)
 	return (0);
 }
 
-int	set_filedirectories(t_cmd *cmd, int *fd_in, int *fd_out)
+int	set_filedirectories(t_cmd *cmd, int *fd_in, int *fd_out, t_env *env_list)
 {
 	t_list	*redirs;
 	t_redir	*redir;
@@ -95,7 +95,7 @@ int	set_filedirectories(t_cmd *cmd, int *fd_in, int *fd_out)
 		if (ft_strncmp(redir->type, ">>", 2) == 0)
 			exit_status = handle_append_output(redir, fd_out);
 		else if (ft_strncmp(redir->type, "<<", 2) == 0)
-			exit_status = handle_heredoc(redir, fd_in);
+			exit_status = handle_heredoc(redir, fd_in, env_list);
 		else if (ft_strncmp(redir->type, ">", 1) == 0)
 			exit_status = handle_overwrite_output(redir, fd_out);
 		else if (ft_strncmp(redir->type, "<", 1) == 0)

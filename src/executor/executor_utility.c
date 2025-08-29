@@ -1,5 +1,6 @@
 
 #include "executor.h"
+#include "../parser/parser.h"
 
 char	**convert_list_to_arr(t_list *lst)
 {
@@ -19,12 +20,14 @@ char	**convert_list_to_arr(t_list *lst)
 	return (arr);
 }
 
-static void	heredoc_loop(const char *delimiter, int fd)
+static void	heredoc_loop(const char *delimiter, int fd, t_env *env_list, int is_quoted __attribute__((unused)))
 {
 	char	*line;
+	char	*expanded_line;
 	int		line_number;
 
 	line = NULL;
+	expanded_line = NULL;
 	line_number = 1;
 	while (1)
 	{
@@ -40,14 +43,26 @@ static void	heredoc_loop(const char *delimiter, int fd)
 			free(line);
 			break ;
 		}
-		write(fd, line, ft_strlen(line));
-		write(fd, "\n", 1);
+		
+		// Always expand variables in heredoc content
+		expanded_line = expand_env_token(line, env_list, NULL);
+		if (expanded_line)
+		{
+			write(fd, expanded_line, ft_strlen(expanded_line));
+			write(fd, "\n", 1);
+			free(expanded_line);
+		}
+		else
+		{
+			write(fd, line, ft_strlen(line));
+			write(fd, "\n", 1);
+		}
+		
 		free(line);
-		line_number++;
 	}
 }
 
-int	execute_heredoc(const char *delimiter)
+int	execute_heredoc(const char *delimiter, t_env *env_list, int is_quoted)
 {
 	char	*filename;
 	int		fd;
@@ -59,7 +74,7 @@ int	execute_heredoc(const char *delimiter)
 		perror("open heredoc for writing");
 		return (-1);
 	}
-	heredoc_loop(delimiter, fd);
+	heredoc_loop(delimiter, fd, env_list, is_quoted);
 	close(fd);
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)

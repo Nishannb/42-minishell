@@ -11,7 +11,7 @@ void	handle_input(char *buf, size_t *len, size_t buffsize)
 	char	*str;
 
 	g_signal_received = NOTSIG;
-	str = readline("minishell: ");
+	str = readline("\nminishell: ");
 	if (str == NULL)
 	{
 		write(STDOUT_FILENO, "exit\n", 5);

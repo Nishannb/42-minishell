@@ -4,7 +4,7 @@
 void	print_error_and_exit(const char *cmd_path, int exit_status,
 		t_exec_ctx *ctx, char **tokens)
 {
-	write(STDERR_FILENO, "minishell: ", 13);
+	write(STDERR_FILENO, "minishell ❤", 13);
 	write(STDERR_FILENO, ": ", 2);
 	write(STDERR_FILENO, cmd_path, ft_strlen(cmd_path));
 	if (exit_status == 126)
@@ -55,7 +55,7 @@ void	exec_cmd(t_cmd *cmd, t_command_group *command_group, t_env *env_list,
 	int			saved_std[2];
 	int			exit_status;
 
-	exit_status = set_filedirectories(cmd, &fd_in, &fd_out);
+	exit_status = set_filedirectories(cmd, &fd_in, &fd_out, env_list);
 	if (exit_status != 0)
 		exit(exit_status);
 	save_fds(&(saved_std[0]), &(saved_std[1]));

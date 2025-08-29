@@ -51,6 +51,7 @@ typedef struct s_redir
 {
 	char						*direction;
 	char						type[2];
+	int							is_quoted;
 }								t_redir;
 
 typedef struct s_env
